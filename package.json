@@ -1,0 +1,11 @@
+{
+  "name": "replace-content-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ReplaceContentPlugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Phil Kessel",
+  "license": "ISC"
+}
