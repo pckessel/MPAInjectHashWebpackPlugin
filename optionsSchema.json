@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "logSkipped": { "type": "boolean" },
+    "logWarnings": { "type": "boolean" },
+    "logInjection": { "type": "boolean" },
+    "matchPattern": { "type": "string" },
+    "defaultWriteFile": { "type": "string", "pattern": "^[\\d*|\\w*]+\.\\w{2,}$" },
+    "overrides": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "\\w+": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1,
+          "properties": {
+            "file": { "type": "string" },
+            "relativePath": { "type": "string" },
+            "absolutePath": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
