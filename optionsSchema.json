@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "patternToMatch": { "type": "string" },
+    "defaultWriteFile": { "type": "string", "pattern": "^[\\d|\\w]+\\.\\w{2,}$" },
+    "chunkOverrides": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "\\w+": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1,
+          "properties": {
+            "file": { "type": "string" },
+            "path": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
