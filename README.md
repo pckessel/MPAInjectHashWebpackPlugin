@@ -4,28 +4,51 @@ places within an index.aspx page.
 
 There seems to have been other dealing with this issue yet I found no obvious open source solutions. I gained a few clues from [this github post](https://github.com/webpack/webpack/issues/86#issuecomment-135526500)
 
-[html-webpack-plugin]https://github.com/ampedandwired/html-webpack-plugin is a very popular plugin for doing similar things to this one, however it isnt nearly as flexible and it will only write to html files. Aspx files dont have the same structure as html files so the above plugin wouldnt work.
+[html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) is a very popular plugin for doing similar things to this one, however it isnt nearly as flexible and it will only write to html files. Aspx files dont have the same structure as html files so the above plugin wouldnt work.
 
 # Install
 TODO --> update how to install this package
 
 # Useage
+Consider a project with the following folder structure:
 
-*Folder Structure*
-**Project**
-  *src
-    *app1
-      *app1.js
-      *index.aspx
-    *app2
-      *app2.js
-      *app2.master
-    *app3
-      *app3.js
-    *sampleDir
-      *randomName1.extChoice
-  *dist
-    *build
+
+> ProjectDir
+> - src
+> --- app1
+> ----- app1.js
+> ----- index.aspx
+> --- app2
+> ----- app2.js
+> ----- app2.master
+> --- app3
+> ----- app3.js
+> --- sampleDir
+> ----- randomName1.extChoice
+>
+> -dist
+>    build
+
+```js
+ProjectDir
+| - src
+|   | - app1
+|   |  | - app1.js
+|   |  | - index.aspx
+|   |
+|   | - app2
+|   |  | - app2.js
+|   |  | - app2.master
+|   |
+|   | - app3
+|   |   | - app3.js
+|   |
+|   | - sampleDir
+|      | - randomName1.extChoice
+|
+| - dist
+|   | - build
+```
 
 ---
 
@@ -112,12 +135,12 @@ plugins: [
 
 ---
 
-There are 3 output chunks after running here.
+As you can see, from the webpack config's entry points, there will be 3 output chunks after running here.
 1. app1
 2. app2
 3. app3
 
-`app1`'s output chunk gets written to the index.aspx file within the app1 directory. This is the default behavior and no overrides needed to be passed in for it.
+We did not pass in any separate overrides to the plugin for `app1`, therefore it's output chunk gets written to the index.aspx file within the app1 directory. This is the default behavior.
 
 `src/app1/index.aspx`
 >...
@@ -128,7 +151,7 @@ There are 3 output chunks after running here.
 >   <script type="text/javascript" src="/dist/build/app1-8ffe29d58b95d211d686-bundle.js"></script>
 
 
-`app2`'s output gets written to the app2.master file within the app2 directory. We has to override the file to look for within that application's directory.
+We wanted to write the newly generated bundle for app2 into its `app2.master` file within the `app2` directory. In order to do this, we simply passed in an override for app2 and specified the file. Passing in the file property only worked because the target file existed within the same directory as the entry file for app2.
 
 `src/app2/app2.master`
 
@@ -151,14 +174,15 @@ There are 3 output chunks after running here.
 > app3-8ffe29d58b95d211d686-bundle.js
 
 Note the following:
-app3.js had no `-bundle` so it didnt match.
-Comment had a .aspx extension so no match.
-See the `matchPattern` option below.
+line 2's app3.js does not have a `-bundle` in the string so it didnt match the regular expression.
+The comment below has .aspx as its extension, so again, no match.
+The last line had the correct pattern so it was matched and replaced by the newly generated asset name.
+See the `matchPattern` option below for further configurations.
 
 The overrides option for this plugin also accepts an `absolutePath` property which you can see in the `optionsSchema.json`.
 
 `matchPattern` option allows you to pass in a string which will be combined into a Regular Expression
-in between `chunk.name`YOUR_PATTERN`.`chunk file extension`.
+in between `chunk.name``YOUR_PATTERN``.``chunk file extension`.
 By default it looks for `[chunk name]-[OPTIONAL HASH-]bundle.[fileExt]`.
 
 `defaultWriteFile` allows you to specify what default file to write to within the directory of that chunks entry point file. Default is index.aspx.
