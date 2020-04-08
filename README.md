@@ -12,23 +12,6 @@ TODO --> update how to install this package
 # Useage
 Consider a project with the following folder structure:
 
-
-> ProjectDir
-> - src
-> --- app1
-> ----- app1.js
-> ----- index.aspx
-> --- app2
-> ----- app2.js
-> ----- app2.master
-> --- app3
-> ----- app3.js
-> --- sampleDir
-> ----- randomName1.extChoice
->
-> -dist
->    build
-
 ```js
 ProjectDir
 | - src
@@ -182,7 +165,7 @@ See the `matchPattern` option below for further configurations.
 The overrides option for this plugin also accepts an `absolutePath` property which you can see in the `optionsSchema.json`.
 
 `matchPattern` option allows you to pass in a string which will be combined into a Regular Expression
-in between `chunk.name``YOUR_PATTERN``.``chunk file extension`.
+in between `chunk.name` YOUR_PATTERN `.` `chunk file extension`.
 By default it looks for `[chunk name]-[OPTIONAL HASH-]bundle.[fileExt]`.
 
 `defaultWriteFile` allows you to specify what default file to write to within the directory of that chunks entry point file. Default is index.aspx.
