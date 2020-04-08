@@ -12,7 +12,7 @@ This package is not registered in npm, so for now:
 That will pull down all of the latest changes from the master branch. If you want to install from a specific commit,
 find the commit hash and install same as above but with #specific-commit-hash appended to the end of the path.
 
-# Useage
+# Usage
 Consider a project with the following folder structure:
 
 ```js
