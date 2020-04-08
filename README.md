@@ -7,7 +7,10 @@ There seems to have been other dealing with this issue yet I found no obvious op
 [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) is a very popular plugin for doing similar things to this one, however it isnt nearly as flexible and it will only write to html files. Aspx files dont have the same structure as html files so the above plugin wouldnt work.
 
 # Install
-TODO --> update how to install this package
+This package is not registered in npm, so for now:
+`npm install --save https://github.com/pckessel/replace-content-plugin`
+That will pull down all of the latest changes from the master branch. If you want to install from a specific commit,
+find the commit hash and install same as above but with #specific-commit-hash appended to the end of the path.
 
 # Useage
 Consider a project with the following folder structure:
