@@ -46,7 +46,7 @@ ProjectDir
  ...
  </script>
  <asp:Content ID="Content1" ContentPlaceHolderID="appHead" runat="server">
-   <!-- We need css bundles here -->
+   <!-- We need css bundles here -->`
    <link rel="stylesheet" href="/dist/build/app1.bundle.css">
  </asp:Content>
 
@@ -88,9 +88,9 @@ ProjectDir
 `randomName1.extChoice`
 ```js
 <!-- example file for illustration-->
-I am some text within app3.js
+<!-- I am some text within app3.js-->
 <!-- app3.bundle.aspx -->
-app3.bundle.js
+<!-- app3.bundle.js -->
 ```
 ---
 
@@ -154,10 +154,10 @@ We wanted to write the newly generated bundle for app2 into its `app2.master` fi
 
 `src/sampleDir/randomName1.extChoice`
 ```js
- <!-- example file for illustration-->
- I am some text within app3.js
+ <!-- example file for illustration -->
+ <!-- I am some text within app3.js -->
  <!-- app3-bundle.aspx -->
- app3.bundle.8ffe29d58b95d211d686.js
+ <!-- app3.bundle.8ffe29d58b95d211d686.js -->
 ```
 
 Note the following:
