@@ -8,7 +8,7 @@ There seems to have been other dealing with this issue yet I found no obvious op
 
 # Install
 This package is not registered in npm, so for now:
-`npm install --save https://github.com/pckessel/inject-chunks-webpack-plugin`
+`npm install --save https://github.com/pckessel/InjectChunksWebpackPlugin`
 That will pull down all of the latest changes from the master branch. If you want to install from a specific commit,
 find the commit hash and install same as above but with #specific-commit-hash appended to the end of the path.
 
@@ -112,7 +112,7 @@ plugins: [
       // defaultWriteFile: chcange this if you dont want to write to index.aspx by default
       chunkOverrides: {
         app2: { file: 'app2.master' },
-        app3: { relativePath: './src/sampleDir/randomName1.extChoice' }
+        app3: { path: './src/sampleDir/randomName1.extChoice' }
       }
     })
   ]
@@ -150,7 +150,7 @@ We wanted to write the newly generated bundle for app2 into its `app2.master` fi
  ...
 ```
 
-`app3`'s output gets written to src/sampleDir/randomName1.extChoice. We passed a relative path into the chunkOverrides object for the app3 entry because the target output file doesn't exist with the directory of `app3`'s entry point.
+`app3`'s output gets written to src/sampleDir/randomName1.extChoice. We passed path into the chunkOverrides object for the app3 entry because the target output file doesn't exist with the directory of `app3`'s entry point. The path property should be an absolute path to the file which you wish to write to.
 
 `src/sampleDir/randomName1.extChoice`
 ```js
@@ -165,8 +165,6 @@ line 2's app3.js does not have a `.bundle` in the string so it didnt match the r
 The comment below has .aspx as its extension, so again, no match.
 The last line had the correct pattern so it was matched and replaced by the newly generated asset.
 See the `patternToMatch` option below for further configurations.
-
-The chunkOverrides option for this plugin also accepts an `absolutePath` property which you can see in the `optionsSchema.json`.
 
 `patternToMatch` option allows you to pass in a string which will be combined into a Regular Expression
 in between `chunk.name` YOUR_PATTERN `.` `chunk file extension`.

@@ -13,8 +13,7 @@
           "maxProperties": 1,
           "properties": {
             "file": { "type": "string" },
-            "relativePath": { "type": "string" },
-            "absolutePath": { "type": "string" }
+            "path": { "type": "string" }
           }
         }
       }
