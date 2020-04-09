@@ -39,58 +39,59 @@ ProjectDir
 ---
 
 `app1/index.aspx`
+```js
+ <%@ Page Language="C#" AutoEventWireup="false" Inherits="path" MasterPageFile="~/> path %>
 
-> <%@ Page Language="C#" AutoEventWireup="false" Inherits="path" MasterPageFile="~/> path %>
->
-> <script runat="server" type="text/C#">
-> ...
-> </script>
-> <asp:Content ID="Content1" ContentPlaceHolderID="appHead" runat="server">
->   <!-- We need css bundles here -->
->   <link rel="stylesheet" href="/dist/build/app1.bundle.css">
-> </asp:Content>
->
-> <asp:Content ID="Content2" ContentPlaceHolderID="appBody" runat="server">
-> ...
-> </asp:Content>
->
-> <asp:Content ID="Content3" ContentPlaceHolderID="appBodyEnd" runat="server">
->   <!-- We need js bundles here -->
->   <script type="text/javascript" src="/dist/build/app1.bundle.js"></script>
-> </asp:Content>
+ <script runat="server" type="text/C#">
+ ...
+ </script>
+ <asp:Content ID="Content1" ContentPlaceHolderID="appHead" runat="server">
+   <!-- We need css bundles here -->
+   <link rel="stylesheet" href="/dist/build/app1.bundle.css">
+ </asp:Content>
 
+ <asp:Content ID="Content2" ContentPlaceHolderID="appBody" runat="server">
+ ...
+ </asp:Content>
+
+ <asp:Content ID="Content3" ContentPlaceHolderID="appBodyEnd" runat="server">
+   <!-- We need js bundles here -->
+   <script type="text/javascript" src="/dist/build/app1.bundle.js"></script>
+ </asp:Content>
+```
 ---
 
 `app2.master`
+```js
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="some.namespace" %>
 
-><%@ Master Language="C#" AutoEventWireup="true" Inherits="some.namespace" %>
->
-> <script runat="server" type="text/C#">
-> ...
-> </script>
-> <asp:Content ID="Content1" ContentPlaceHolderID="appHead" runat="server">
-<!-- We need css bundles here -->
->   <link rel="stylesheet" href="/dist/build/app2.bundle.css">
-> </asp:Content>
->
-> <asp:Content ID="Content2" ContentPlaceHolderID="appBody" runat="server">
-> ...
-> </asp:Content>
->
-> <asp:Content ID="Content3" ContentPlaceHolderID="appBodyEnd" runat="server">
->   <!-- We need js bundles here -->
->   <script type="text/javascript" src="/dist/build/app2.bundle.js"></script>
-> </asp:Content>
+ <script runat="server" type="text/C#">
+ ...
+ </script>
+ <asp:Content ID="Content1" ContentPlaceHolderID="appHead" runat="server">
+ <!-- We need css bundles here -->
+   <link rel="stylesheet" href="/dist/build/app2.bundle.css">
+ </asp:Content>
+
+ <asp:Content ID="Content2" ContentPlaceHolderID="appBody" runat="server">
+ ...
+ </asp:Content>
+
+ <asp:Content ID="Content3" ContentPlaceHolderID="appBodyEnd" runat="server">
+   <!-- We need js bundles here -->
+   <script type="text/javascript" src="/dist/build/app2.bundle.js"></script>
+ </asp:Content>
+```
 
 ---
 
 `randomName1.extChoice`
-
-> <!-- example file for illustration-->
-> I am some text within app3.js
-> <!-- app3.bundle.aspx -->
-> app3.bundle.js
-
+```js
+<!-- example file for illustration-->
+I am some text within app3.js
+<!-- app3.bundle.aspx -->
+app3.bundle.js
+```
 ---
 
 `Webpack config`
@@ -127,35 +128,37 @@ As you can see, from the webpack config's entry points, there will be 3 output c
 We did not pass in any separate chunkOverrides to the plugin for `app1`, therefore it's output chunk gets written to the index.aspx file within the app1 directory if a match is found within it. This is the default behavior.
 
 `src/app1/index.aspx`
->...
->   <!-- We need css bundles here -->
->   <link rel="stylesheet" href="/dist/build/app1.bundle.8ffe29d58b95d211d686.css">
->...
->   <!-- We need js bundles here -->
->   <script type="text/javascript" src="/dist/build/app1.bundle.8ffe29d58b95d211d686.js"></script>
-
+```js
+...
+   <!-- We need css bundles here -->
+   <link rel="stylesheet" href="/dist/build/app1.bundle.8ffe29d58b95d211d686.css">
+...
+   <!-- We need js bundles here -->
+   <script type="text/javascript" src="/dist/build/app1.bundle.8ffe29d58b95d211d686.js"></script>
+```js
 
 We wanted to write the newly generated bundle for app2 into its `app2.master` file within the `app2` directory. In order to do this, we simply passed in an override for app2 and specified the file. Passing in the file property works because the target file (app2.master) existed within the same directory as the entry file for app2.
 
 `src/app2/app2.master`
-
-> ...
+```js
+ ...
 <!-- We need css bundles here -->
->   <link rel="stylesheet" href="/dist/build/app2.bundle.8ffe29d58b95d211d686.css">
-> ...
->   <!-- We need js bundles here -->
->   <script type="text/javascript" src="/dist/build/app2.bundle.8ffe29d58b95d211d686.js"></script>
-> ...
-
+   <link rel="stylesheet" href="/dist/build/app2.bundle.8ffe29d58b95d211d686.css">
+ ...
+   <!-- We need js bundles here -->
+   <script type="text/javascript" src="/dist/build/app2.bundle.8ffe29d58b95d211d686.js"></script>
+ ...
+```
 
 `app3`'s output gets written to src/sampleDir/randomName1.extChoice. We passed a relative path into the chunkOverrides object for the app3 entry because the target output file doesn't exist with the directory of `app3`'s entry point.
 
 `src/sampleDir/randomName1.extChoice`
-
-> <!-- example file for illustration-->
-> I am some text within app3.js
-> <!-- app3-bundle.aspx -->
-> app3.bundle.8ffe29d58b95d211d686.js
+```js
+ <!-- example file for illustration-->
+ I am some text within app3.js
+ <!-- app3-bundle.aspx -->
+ app3.bundle.8ffe29d58b95d211d686.js
+```
 
 Note the following:
 line 2's app3.js does not have a `.bundle` in the string so it didnt match the regular expression.

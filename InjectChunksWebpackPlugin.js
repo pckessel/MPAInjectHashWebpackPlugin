@@ -12,9 +12,7 @@ class InjectChunksWebpackPlugin {
     this.defaultWriteFile = options.defaultWriteFile ? options.defaultWriteFile : 'index.aspx';
   };
 
-  // Define `apply` as its prototype method which is supplied with compiler as its argument
   apply(compiler) {
-    // Specify the event hook to attach to
     compiler.hooks.emit.tap('InjectChunksWebpackPlugin', compilation => {
 
         // get array of all previous builds in output dir
