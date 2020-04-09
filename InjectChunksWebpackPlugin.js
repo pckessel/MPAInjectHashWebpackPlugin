@@ -52,8 +52,8 @@ class InjectChunksWebpackPlugin {
           // default regex will find the first place in the original file contents that has the filename.bundle[.(optional)HASH].ext.
           // This way it will replace exisitng bundles that already have a hash on them as well as bundle references which do not yet have a hash.
           const patternToMatch = this.options.patternToMatch ?
-          new RegExp(`${chunk.name}${this.options.patternToMatch}\.${extension}`) :
-          new RegExp(`${chunk.name}\.bundle\.?[\\d*|\\w*]*?\.${extension}`);
+            new RegExp(`${chunk.name}${this.options.patternToMatch}\.${extension}`) :
+            new RegExp(`${chunk.name}\.bundle\.?[\\d*|\\w*]*?\.${extension}`);
 
           // array where the first match is at index 0 or null if none were found
           const matched = originalFileContents.match(patternToMatch);
