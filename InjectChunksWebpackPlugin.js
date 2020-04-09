@@ -1,8 +1,6 @@
-const path = require('path');
 const fs = require('fs');
 const validate = require('schema-utils');
 const pluginSchema = require('./optionsSchema.json');
-
 
 class InjectChunksWebpackPlugin {
   constructor(options = {}) {
@@ -27,8 +25,7 @@ class InjectChunksWebpackPlugin {
 
       compilation.chunks.forEach(chunk => {
 
-        // check if an chunkOverrides object was passed in. If so and there is also an override defined for the
-        // current output chunk then establish the targetPath with the appropriate override.
+        // Establish targetPath for the writeable file.
         if (this.chunkOverrides && this.chunkOverrides[chunk.name]) {
           let chunkOverride = this.chunkOverrides[chunk.name];
           if (chunkOverride.path) {
@@ -44,46 +41,42 @@ class InjectChunksWebpackPlugin {
 
         // Iterate through all of the output chunks (there will be one for every entry point defined);
         for (let i = 0; i < chunk.files.length; i++) {
-          let file = chunk.files[i];
+          let newFile = chunk.files[i];
 
-          // pull out the extension from the file built in that chunk - Only css and js by default.
-          let extension = file.match(new RegExp(/\.(css|js)$/))[1];
+          // pull out the extension from the newFile built in that chunk - Only css and js by default.
+          // this will be used to find a correct match in the target file
+          let extension = newFile.match(new RegExp(/\.(css|js)$/))[1];
 
-          // Get the file contents from the targetPath
           const originalFileContents = fs.readFileSync(targetPath, 'utf8');
 
-          // default regex will find the first place in the original file contents that has the filename-[(optional)HASH-]bundle.ext.
+          // default regex will find the first place in the original file contents that has the filename.bundle[.(optional)HASH].ext.
           // This way it will replace exisitng bundles that already have a hash on them as well as bundle references which do not yet have a hash.
           const patternToMatch = this.options.patternToMatch ?
           new RegExp(`${chunk.name}${this.options.patternToMatch}\.${extension}`) :
           new RegExp(`${chunk.name}\.bundle\.?[\\d*|\\w*]*?\.${extension}`);
-            // new RegExp(`${chunk.name}${this.options.patternToMatch}\.${extension}`) :
-            // new RegExp(`${chunk.name}-?[\\d*|\\w*]*?-bundle\.${extension}`);
 
-          // gives back an array where the first match from the file is at index 0 or null if none were found
+          // array where the first match is at index 0 or null if none were found
           const matched = originalFileContents.match(patternToMatch);
 
-          // If file already exists in build dir and the generated file has already been written to the
+          // If newFile already exists in output dir and the generated newFile has already been written to the
           // target file. This will happen on subsequent rebuilds when a file webpack is looking at hasnt changed
-          // so the hash remains the same and has already been written to a file.
-          if (previousBuilds.includes(file) && (matched && matched[0] === file)) {
-            Logger.log(`SKIPPING INJECTION: ${file}\nalready exists in the output dir and has previously been injected into:\n${targetPath}\n`);
+          // so the hash remains the same and has already been written to the targetfile.
+          if (previousBuilds.includes(newFile) && (matched && matched[0] === newFile)) {
+            Logger.log(`SKIPPING INJECTION: ${newFile}\nalready exists in the output dir and has previously been injected into:\n${targetPath}\n`);
             // continue with loop, avoid rewriting to file
             continue;
           };
 
-          // match found and new file is unique --> inject filepath
+          // match found and newFile is unique --> inject filepath
           if (matched) {
-            //replace original text with newly generated file name.
-            const newContents = originalFileContents.replace(matched[0], file);
+            const newContents = originalFileContents.replace(matched[0], newFile);
 
-            // write new file to disk
             fs.writeFileSync(targetPath, newContents);
 
-            Logger.info(`INJECTION: Replaced: ${matched[0]}\nWith the new file: ${file}\nIn: ${targetPath}\n`)
+            Logger.info(`INJECTION: Replaced: ${matched[0]}\nWith the new file: ${newFile}\nIn: ${targetPath}\n`)
           } else {
             Logger.warn(
-              `WARNING: The pattern ${patternToMatch} was not found in the file:\n${targetPath}\nThe generated file: ${file} was not injected to the target file.\n`
+              `WARNING: The pattern ${patternToMatch} was not found in the file:\n${targetPath}\nThe generated file: ${newFile} was not injected to the target file.\n`
             );
           }
         }
