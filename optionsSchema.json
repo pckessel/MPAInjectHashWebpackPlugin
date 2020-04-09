@@ -1,12 +1,9 @@
 {
   "type": "object",
   "properties": {
-    "logSkipped": { "type": "boolean" },
-    "logWarnings": { "type": "boolean" },
-    "logInjection": { "type": "boolean" },
-    "matchPattern": { "type": "string" },
-    "defaultWriteFile": { "type": "string", "pattern": "^[\\d*|\\w*]+\.\\w{2,}$" },
-    "overrides": {
+    "patternToMatch": { "type": "string" },
+    "defaultWriteFile": { "type": "string", "pattern": "^[\\d|\\w]+\\.\\w{2,}$" },
+    "chunkOverrides": {
       "type": "object",
       "minProperties": 1,
       "patternProperties": {

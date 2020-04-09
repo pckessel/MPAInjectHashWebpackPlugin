@@ -1,8 +1,8 @@
 {
-  "name": "replace-content-plugin",
+  "name": "inject-chunks-webpack-plugin",
   "version": "1.0.0",
   "description": "",
-  "main": "ReplaceContentPlugin.js",
+  "main": "InjectChunksWebpackPlugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
