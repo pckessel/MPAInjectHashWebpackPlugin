@@ -135,7 +135,7 @@ We did not pass in any separate chunkOverrides to the plugin for `app1`, therefo
 ...
    <!-- We need js bundles here -->
    <script type="text/javascript" src="/dist/build/app1.bundle.8ffe29d58b95d211d686.js"></script>
-```js
+```
 
 We wanted to write the newly generated bundle for app2 into its `app2.master` file within the `app2` directory. In order to do this, we simply passed in an override for app2 and specified the file. Passing in the file property works because the target file (app2.master) existed within the same directory as the entry file for app2.
 
