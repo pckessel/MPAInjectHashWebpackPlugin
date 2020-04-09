@@ -161,8 +161,8 @@ We wanted to write the newly generated bundle for app2 into its `app2.master` fi
 ```
 
 Note the following:
-line 2's app3.js does not have a `.bundle` in the string so it didnt match the regular expression.
-The comment below has .aspx as its extension, so again, no match.
+line 2's `app3.js` does not have a `.bundle` in the string so it didnt match the regular expression.
+The comment below has `.aspx` as its extension, so again, no match.
 The last line had the correct pattern so it was matched and replaced by the newly generated asset.
 See the `patternToMatch` option below for further configurations.
 
