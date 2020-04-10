@@ -1,6 +1,6 @@
 # Inject Chunks Webpack Plugin
-This Plugin was written in order to be able to inject newly generated webpack assest into specific
-places within an index.aspx page.
+This Plugin was written in order to be able to inject the name of newly generated webpack assest into specific places within an index.aspx page,
+though it can be configured to inject them into any kind of file read from the file system.
 
 There seems to have been other dealing with this issue yet I found no obvious open source solutions. I gained a few clues from [this github post](https://github.com/webpack/webpack/issues/86#issuecomment-135526500)
 
