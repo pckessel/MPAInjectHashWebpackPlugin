@@ -41,8 +41,7 @@ class InjectChunksWebpackPlugin {
         }
 
         // Iterate through all of the output chunks (there will be one for every entry point defined);
-        for (let i = 0; i < chunk.files.length; i++) {
-          let newFile = chunk.files[i];
+        chunk.files.forEach( newFile => {
 
           // pull out the extension from the newFile built in that chunk - Only css and js by default.
           // this will be used to find a correct match in the target file
@@ -63,8 +62,8 @@ class InjectChunksWebpackPlugin {
           // so the hash remains the same and has already been written to the targetfile.
           if (previousBuilds.includes(newFile) && (matched && matched[0] === newFile)) {
             Logger.log(`SKIPPING INJECTION: ${newFile}\nalready exists in the output dir and has previously been injected into:\n${targetPath}\n`);
-            // continue with loop, avoid rewriting to file
-            continue;
+            // avoid rewriting to file and move on to next file.
+            return;
           };
 
           // match found and newFile is unique --> inject filepath
@@ -79,7 +78,7 @@ class InjectChunksWebpackPlugin {
               `WARNING: The pattern ${patternToMatch} was not found in the file:\n${targetPath}\nThe generated file: ${newFile} was not injected to the target file.\n`
             );
           }
-        }
+        })
       })
     });
   };
