@@ -112,11 +112,7 @@ plugins: [
       // defaultWriteFile: change this if you dont want to write to index.aspx by default
       chunkOverrides: {
         app2: { file: 'app2.master' },
-<<<<<<< HEAD
-        app3: { path: path.join(__dirname, 'src/sampleDir/randomName1.extChoice')}
-=======
         app3: { path: path.join(__dirname, 'src/sampleDir/randomName1.extChoice') }
->>>>>>> 335b43c3339bb6227711d446b0576c93d5ad1e19
       }
     })
   ]

@@ -6,8 +6,8 @@ class InjectChunksWebpackPlugin {
   constructor(options = {}) {
     validate(pluginSchema, options, { name: "InjectChunksWebpackPlugin" });
     this.options = options;
-    this.chunkOverrides = options.chunkOverrides ? options.chunkOverrides : null;
-    this.defaultWriteFile = options.defaultWriteFile ? options.defaultWriteFile : 'index.aspx';
+    this.chunkOverrides = options.chunkOverrides || null;
+    this.defaultWriteFile = options.defaultWriteFile || 'index.aspx';
   };
 
   apply(compiler) {
@@ -23,6 +23,7 @@ class InjectChunksWebpackPlugin {
       const FILE = /\w+\.js/;
       let targetPath;
 
+      // There will be a chunk for every entry in your webpack confg
       compilation.chunks.forEach(chunk => {
 
         // Establish targetPath for the writeable file.
