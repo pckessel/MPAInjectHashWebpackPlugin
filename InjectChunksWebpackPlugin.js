@@ -44,8 +44,16 @@ class InjectChunksWebpackPlugin {
         chunk.files.forEach( newFile => {
 
           // pull out the extension from the newFile built in that chunk - Only css and js by default.
-          // this will be used to find a correct match in the target file
-          let extension = newFile.match(new RegExp(/\.(css|js)$/))[1];
+          // this will be used to find a correct match in the target file.
+          let extension = newFile.match(new RegExp(/\.(css|js)$/)) ? newFile.match(new RegExp(/\.(css|js)$/))[1] : null;
+
+          // If something other than css or js, then return and skip the rest.
+          // For example source map files.
+          //TODO Bring in support for this
+          if(!extension){
+            Logger.log(`UnSupported File Extension for ${newFile}\n`);
+            return;
+          }
 
           // default regex will find the first place in the original file contents that has the filename.bundle[.(optional)HASH].ext.
           // This way it will replace exisitng bundles that already have a hash on them as well as bundle references which do not yet have a hash.
