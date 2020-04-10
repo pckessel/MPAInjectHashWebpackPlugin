@@ -109,10 +109,10 @@ plugins: [
     new MiniCssExtractPlugin({ filename: { filename: "[name].bundle.[contenthash].css" } }),
     new InjectChunksWebpackPlugin({
       // patternToMatch: 'string to be matched within [name][ your pattern ].[js|css]',
-      // defaultWriteFile: chcange this if you dont want to write to index.aspx by default
+      // defaultWriteFile: change this if you dont want to write to index.aspx by default
       chunkOverrides: {
         app2: { file: 'app2.master' },
-        app3: { path: './src/sampleDir/randomName1.extChoice' }
+        app3: { path: path.join(__dirname, 'src/sampleDir/randomName1.extChoice') }
       }
     })
   ]
