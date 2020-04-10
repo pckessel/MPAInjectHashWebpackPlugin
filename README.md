@@ -156,7 +156,7 @@ We wanted to write the newly generated bundle for app2 into its `app2.master` fi
 ```js
  <!-- example file for illustration -->
  <!-- I am some text within app3.js -->
- <!-- app3-bundle.aspx -->
+ <!-- app3.bundle.aspx -->
  <!-- "app3.bundle.8ffe29d58b95d211d686.js" -->
 ```
 
