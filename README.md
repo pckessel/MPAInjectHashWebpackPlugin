@@ -109,10 +109,14 @@ plugins: [
     new MiniCssExtractPlugin({ filename: { filename: "[name].bundle.[contenthash].css" } }),
     new InjectChunksWebpackPlugin({
       // patternToMatch: 'string to be matched within [name][ your pattern ].[js|css]',
-      // defaultWriteFile: chcange this if you dont want to write to index.aspx by default
+      // defaultWriteFile: change this if you dont want to write to index.aspx by default
       chunkOverrides: {
         app2: { file: 'app2.master' },
+<<<<<<< HEAD
         app3: { path: path.join(__dirname, 'src/sampleDir/randomName1.extChoice')}
+=======
+        app3: { path: path.join(__dirname, 'src/sampleDir/randomName1.extChoice') }
+>>>>>>> 335b43c3339bb6227711d446b0576c93d5ad1e19
       }
     })
   ]
@@ -156,7 +160,7 @@ We wanted to write the newly generated bundle for app2 into its `app2.master` fi
 ```js
  <!-- example file for illustration -->
  <!-- I am some text within app3.js -->
- <!-- app3-bundle.aspx -->
+ <!-- app3.bundle.aspx -->
  <!-- "app3.bundle.8ffe29d58b95d211d686.js" -->
 ```
 
