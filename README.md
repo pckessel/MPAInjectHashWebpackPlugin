@@ -17,6 +17,7 @@ Consider a project with the following folder structure:
 
 ```js
 ProjectDir
+<<<<<<< HEAD
 |
 +-- src
 |   +-- app1
@@ -35,6 +36,25 @@ ProjectDir
 |
 +-- dist
 |   +-- build
+=======
+| - src
+|   | - app1
+|   |  | - app1.js
+|   |  | - index.aspx
+|   |
+|   | - app2
+|   |  | - app2.js
+|   |  | - app2.master
+|   |
+|   | - app3
+|   |   | - app3.js
+|   |
+|   | - sampleDir
+|      | - randomName1.extChoice
+|
+| - dist
+|   | - build
+>>>>>>> 84f7fe1fb9ce37882a021ac06de03b6f56be754e
 ```
 
 ---
