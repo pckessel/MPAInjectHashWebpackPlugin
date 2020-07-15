@@ -1,4 +1,4 @@
-# Inject Chunks Webpack Plugin
+# MPA Injection Webpack Plugin
 This Plugin was written in order to be able to inject the name of newly generated webpack assest into specific places within an index.aspx page,
 though it can be configured to inject them into any kind of file read from the file system.
 
