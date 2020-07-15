@@ -17,26 +17,6 @@ Consider a project with the following folder structure:
 
 ```js
 ProjectDir
-<<<<<<< HEAD
-|
-+-- src
-|   +-- app1
-|   |   +-- app1.js
-|   |   +-- index.aspx
-|   |
-|   +-- app2
-|   |   +-- app2.js
-|   |   +-- app2.master
-|   |
-|   +-- app3
-|   |   +-- app3.js
-|   |
-|   +-- sampleDir
-|       +-- randomName1.extChoice
-|
-+-- dist
-|   +-- build
-=======
 | - src
 |   | - app1
 |   |  | - app1.js
@@ -54,7 +34,6 @@ ProjectDir
 |
 | - dist
 |   | - build
->>>>>>> 84f7fe1fb9ce37882a021ac06de03b6f56be754e
 ```
 
 ---
@@ -128,7 +107,7 @@ output: {
 },
 plugins: [
     new MiniCssExtractPlugin({ filename: { filename: "[name].bundle.[contenthash].css" } }),
-    new InjectChunksWebpackPlugin({
+    new MPAInjectionWebpackPlugin({
       // patternToMatch: 'string to be matched within [name][ your pattern ].[js|css]',
       // defaultWriteFile: change this if you dont want to write to index.aspx by default
       chunkOverrides: {

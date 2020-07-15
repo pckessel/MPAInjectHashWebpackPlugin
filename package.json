@@ -1,8 +1,8 @@
 {
-  "name": "inject-chunks-webpack-plugin",
+  "name": "mpa-injection-webpack-plugin",
   "version": "1.0.0",
   "description": "",
-  "main": "InjectChunksWebpackPlugin.js",
+  "main": "MPAInjectionWebpackPlugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
