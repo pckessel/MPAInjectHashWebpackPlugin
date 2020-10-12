@@ -1,5 +1,5 @@
-# MPA Injection Webpack Plugin
-This Plugin was written in order to be able to inject the name of newly generated webpack assest into specific places within an index.aspx page,
+# MPA Inject Hash Webpack Plugin
+This Plugin was written in order to be able to inject the name and hash of newly generated webpack assest into specific places within an index.aspx page,
 though it can be configured to inject them into any kind of file read from the file system.
 
 There seems to have been other dealing with this issue yet I found no obvious open source solutions. I gained a few clues from [this github post](https://github.com/webpack/webpack/issues/86#issuecomment-135526500)
@@ -8,7 +8,7 @@ There seems to have been other dealing with this issue yet I found no obvious op
 
 # Install
 This package is not registered in npm, so for now:
-`npm install --save https://github.com/pckessel/MPAInjectionWebpackPlugin`
+`npm install --save https://github.com/pckessel/MPAInjectHashWebpackPlugin`
 That will pull down all of the latest changes from the master branch. If you want to install from a specific commit,
 find the commit hash and install same as above but with #specific-commit-hash appended to the end of the path.
 
@@ -107,7 +107,7 @@ output: {
 },
 plugins: [
     new MiniCssExtractPlugin({ filename: { filename: "[name].bundle.[contenthash].css" } }),
-    new MPAInjectionWebpackPlugin({
+    new MPAInjectHashWebpackPlugin({
       // patternToMatch: 'string to be matched within [name][ your pattern ].[js|css]',
       // defaultWriteFile: change this if you dont want to write to index.aspx by default
       chunkOverrides: {

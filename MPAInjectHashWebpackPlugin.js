@@ -2,22 +2,22 @@ const fs = require('fs');
 const validate = require('schema-utils');
 const pluginSchema = require('./optionsSchema.json');
 
-class MPAInjectionWebpackPlugin {
+class MPAInjectHashWebpackPlugin {
   constructor(options = {}) {
-    validate(pluginSchema, options, { name: "MPAInjectionWebpackPlugin" });
+    validate(pluginSchema, options, { name: "MPAInjectHashWebpackPlugin" });
     this.options = options;
     this.chunkOverrides = options.chunkOverrides || null;
     this.defaultWriteFile = options.defaultWriteFile || 'index.aspx';
   };
 
   apply(compiler) {
-    compiler.hooks.emit.tap('MPAInjectionWebpackPlugin', compilation => {
+    compiler.hooks.emit.tap('MPAInjectHashWebpackPlugin', compilation => {
 
       // get array of all previous builds in output dir
       const previousBuilds = fs.readdirSync(compilation.options.output.path);
 
       // https://webpack.js.org/api/logging or source code --> node_modules\webpack\lib\logging\Logger.js
-      const Logger = compilation.getLogger('MPAInjectionWebpackPlugin');
+      const Logger = compilation.getLogger('MPAInjectHashWebpackPlugin');
 
       // RegEx to get the entry_file.js to be replaced
       const FILE = /\w+\.js/;
@@ -92,4 +92,4 @@ class MPAInjectionWebpackPlugin {
   };
 };
 
-module.exports = MPAInjectionWebpackPlugin;
+module.exports = MPAInjectHashWebpackPlugin;

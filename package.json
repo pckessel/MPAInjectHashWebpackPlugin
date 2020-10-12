@@ -1,8 +1,8 @@
 {
-  "name": "mpa-injection-webpack-plugin",
+  "name": "mpa-inject-hash-webpack-plugin",
   "version": "1.0.0",
   "description": "",
-  "main": "MPAInjectionWebpackPlugin.js",
+  "main": "MPAInjectHashWebpackPlugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
