@@ -5,89 +5,137 @@ const pluginSchema = require('./optionsSchema.json');
 class MPAInjectHashWebpackPlugin {
   constructor(options = {}) {
     validate(pluginSchema, options, { name: "MPAInjectHashWebpackPlugin" });
-    this.options = options;
-    this.chunkOverrides = options.chunkOverrides || null;
+    this.targets = options.targets || {};
     this.defaultWriteFile = options.defaultWriteFile || 'index.aspx';
+    this.publicPath = options.publicPath || null;
+    this.CONSTANTS = { css: 'CSS', js: 'JS' };
   };
+
+  generateTag(fileType, relPath, file) {
+    const scriptTemplate = `<script type="text/javascript" src=\"${relPath}${file}\"></script>`;
+    const linkTemplate = `<link rel="Stylesheet" href=\"${relPath}${file}\" />`
+    return fileType === 'css' ? linkTemplate : scriptTemplate;
+  }
 
   apply(compiler) {
     compiler.hooks.emit.tap('MPAInjectHashWebpackPlugin', compilation => {
 
-      // get array of all previous builds in output dir
-      const previousBuilds = fs.readdirSync(compilation.options.output.path);
-
       // https://webpack.js.org/api/logging or source code --> node_modules\webpack\lib\logging\Logger.js
       const Logger = compilation.getLogger('MPAInjectHashWebpackPlugin');
 
-      // RegEx to get the entry_file.js to be replaced
+      // this is the "entry" config from the webpack config 
+      const configEntries = compilation.options.entry;
+
+      if(!this.publicPath) {
+        this.publicPath = compilation.options.output.publicPath || '/';
+      } 
+
+      // RegEx to get the entryFile.js to be replaced
       const FILE = /\w+\.js/;
-      let targetPath;
 
-      // There will be a chunk for every entry in your webpack confg
-      compilation.chunks.forEach(chunk => {
+      // List of the entry points defined in the webpackconfig. EntryPoint is a Webpack internal class. webpack/lib/Entrypoint.js
+      for (let [name, EntryPoint] of compilation.entrypoints) {
 
-        // Establish targetPath for the writeable file.
-        if (this.chunkOverrides && this.chunkOverrides[chunk.name]) {
-          let chunkOverride = this.chunkOverrides[chunk.name];
-          if (chunkOverride.path) {
-            targetPath = chunkOverride.path;
-          } else {
-            // replace chunk entry module file with the passed in chunkOverrides file.
-            targetPath = chunk.entryModule.resource.replace(FILE, `${chunkOverride.file}`);
+        /****************** Establish the writeable target for current entryPoint **********/
+        // default target write file assumed to exists in same directory as the entry module.
+        let targetPath = configEntries[name].replace(FILE, this.defaultWriteFile);
+  
+        if (this.targets[name]) {
+          targetPath = this.targets[name].path || 
+          configEntries[name].replace(FILE, `${this.targets[name].file}`);
+        } 
+    
+        /* For each chunk associated with the entry point, generate the appropriate html tag for each file,
+        * group those tags by file/tag type and join them all together so that they can be inserted as one big chunk */
+        const generatedContent = EntryPoint.chunks.reduce( (results, chunk) => {
+          // Each chunk will have files that have been generated
+          chunk.files.forEach( newFile => {
+            const extPattern = new RegExp(/\.(css|js)$/);
+            let fileExtension = newFile.match(extPattern) ? newFile.match(extPattern)[1] : null;
+
+            // Return If something other than css or js -- For example source map files.
+            //TODO Bring in support for this
+            if(!fileExtension){
+              Logger.warn(`UnSupported File Extension for ${newFile}`);
+              return;
+            }
+            // create content string of generated tags.
+            results[ this.CONSTANTS[fileExtension] ] += `\n  ${this.generateTag(fileExtension, this.publicPath, newFile)}` 
+          })
+          return results
+        },{ 
+          // Naming convention used to determin which tags are inserted in the various locations of the taget file.
+          [this.CONSTANTS.css]: "", 
+          [this.CONSTANTS.js]: "" 
+        });
+
+
+        // Indication for whether we should write file to the FS. Set when reassigning targetFileContent
+        let fileContentsHaveChanged = false;
+
+        // Read target file into memory to be processed
+        let targetFileContent = fs.readFileSync(targetPath, 'utf8');
+
+        // 'g' flag set so we can search string multiple times
+        const generateRegEx = fileType => RegExp(`<!-- INJECT-${fileType} -->`, 'g');
+
+        const contentTypes = [ this.CONSTANTS.css, this.CONSTANTS.js ];
+        contentTypes.forEach( contentType => {
+          const searchPattern = generateRegEx(contentType)
+
+          // run RegEx once for initial match so we can then grab the lastIndex property of the RegExp object.
+          const initialMatch = searchPattern.exec(targetFileContent)
+
+          // If there was no match yet there are files of that type to be written, send warning
+          if( !initialMatch && generatedContent[contentType].length > 0 ) {
+            Logger.warn(
+              `The searchPattern ${searchPattern} was not found in the file:\n` +
+              `${targetPath}\n` +
+              `The generated ${contentType} files and tags were not injected.`
+            );
+            return; 
+          }
+
+          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec
+          // lastIndex property tells us where the searchPattern ends so we know what position to start replacing content
+          const beginingIndex = searchPattern.lastIndex;
+
+          // run again. The results will have a starting index of the second match so we know where to end replacing content.
+          const secondMatch = searchPattern.exec(targetFileContent);
+
+          if(!secondMatch) { 
+            Logger.error(
+              `Only one ${initialMatch[0]} was found in ${targetPath}\n` +
+              `There must be a pair to properly insert content\n` +
+              `The generated ${contentType} files and tags were not injected.`
+            );
+            return;
           };
-        } else {
-        // No chunkOverrides for this chunk means target write file exists in same dir as the entry module.
-          targetPath = chunk.entryModule.resource.replace(FILE, this.defaultWriteFile);
+
+          // grab a copy of the string of content in between the end of the first matched Pattern and the start of the second matched pattern.
+          const replaceableContent = targetFileContent.slice(beginingIndex, secondMatch.index);
+
+          // if all conetnt matches, then skip
+          if(replaceableContent.match(generatedContent[contentType])) {
+            Logger.info(`SKIPPING INJECTION in ${targetPath}\nAll of the generated tags already exist:\n${generatedContent[contentType]}`);
+            return;
+          }
+
+          targetFileContent = targetFileContent.replace(replaceableContent, `${generatedContent[contentType]}\n  `); // added line formatting
+          fileContentsHaveChanged = true;
+          Logger.info(
+            `INJECTION In: ${targetPath}\n` +
+            `Replaced: ${replaceableContent}\n` +
+            `With: ${generatedContent[contentType]}\n`
+          );
+        });
+
+        if(fileContentsHaveChanged) {
+          Logger.log(`Writing to ${targetPath}`);
+          fs.writeFileSync(targetPath, targetFileContent);
         }
 
-        // Iterate through all of the output chunks (there will be one for every entry point defined);
-        chunk.files.forEach( newFile => {
-
-          // pull out the extension from the newFile built in that chunk - Only css and js by default.
-          // this will be used to find a correct match in the target file.
-          let extension = newFile.match(new RegExp(/\.(css|js)$/)) ? newFile.match(new RegExp(/\.(css|js)$/))[1] : null;
-
-          // If something other than css or js, then return and skip the rest.
-          // For example source map files.
-          //TODO Bring in support for this
-          if(!extension){
-            Logger.log(`UnSupported File Extension for ${newFile}\n`);
-            return;
-          }
-
-          // default regex will find the first place in the original file contents that has the filename.bundle[.(optional)HASH].ext.
-          // This way it will replace exisitng bundles that already have a hash on them as well as bundle references which do not yet have a hash.
-          const patternToMatch = this.options.patternToMatch ?
-            new RegExp(`${chunk.name}${this.options.patternToMatch}\.${extension}`) :
-            new RegExp(`${chunk.name}\.bundle\.?[\\d*|\\w*]*?\.${extension}`);
-
-          const originalFileContents = fs.readFileSync(targetPath, 'utf8');
-          // array where the first match is at index 0 or null if none were found
-          const matched = originalFileContents.match(patternToMatch);
-
-          // If newFile already exists in output dir and the generated newFile has already been written to the
-          // target file. This will happen on subsequent rebuilds when a file webpack is looking at hasnt changed
-          // so the hash remains the same and has already been written to the targetfile.
-          if (previousBuilds.includes(newFile) && (matched && matched[0] === newFile)) {
-            Logger.log(`SKIPPING INJECTION: ${newFile}\nalready exists in the output dir and has previously been injected into:\n${targetPath}\n`);
-            // avoid rewriting to file and move on to next file.
-            return;
-          };
-
-          // match found and newFile is unique --> inject filepath
-          if (matched) {
-            const newContents = originalFileContents.replace(matched[0], newFile);
-
-            fs.writeFileSync(targetPath, newContents);
-
-            Logger.info(`INJECTION: Replaced: ${matched[0]}\nWith the new file: ${newFile}\nIn: ${targetPath}\n`)
-          } else {
-            Logger.warn(
-              `WARNING: The pattern ${patternToMatch} was not found in the file:\n${targetPath}\nThe generated file: ${newFile} was not injected to the target file.\n`
-            );
-          }
-        })
-      })
+      };
     });
   };
 };
