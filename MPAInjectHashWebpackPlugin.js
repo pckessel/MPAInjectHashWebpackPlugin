@@ -69,7 +69,6 @@ class MPAInjectHashWebpackPlugin {
           [this.CONSTANTS.js]: "" 
         });
 
-
         // Indication for whether we should write file to the FS. Set when reassigning targetFileContent
         let fileContentsHaveChanged = false;
 
@@ -115,13 +114,23 @@ class MPAInjectHashWebpackPlugin {
           // grab a copy of the string of content in between the end of the first matched Pattern and the start of the second matched pattern.
           const replaceableContent = targetFileContent.slice(beginingIndex, secondMatch.index);
 
-          // if all conetnt matches, then skip
-          if(replaceableContent.match(generatedContent[contentType])) {
-            Logger.info(`SKIPPING INJECTION in ${targetPath}\nAll of the generated tags already exist:\n${generatedContent[contentType]}`);
+          /* Check to ensure the content is not "" prior to running a match. This was added for the case when there
+          * would be a tag in the replaceable content, but the newly genertaed content was empty which would cause the
+          * match to fail and it would skip, leaving the previous tag in the target file. This would happen if you deleted some
+          * files in your source code and webpack no longer produces a bundle which it previously had. */
+          if(generatedContent[contentType] && replaceableContent.match(generatedContent[contentType])) {
+            Logger.info(`SKIPPING INJECTION in ${targetPath}\nAll of the generated ${contentType} tags already exist:\n${generatedContent[contentType]}`);
             return;
           }
 
-          targetFileContent = targetFileContent.replace(replaceableContent, `${generatedContent[contentType]}\n  `); // added line formatting
+          // get first chunk of text
+          // get last chunk of text
+          // join first, generated content, and last chunk of text together.
+          const firstPartOfFile = targetFileContent.slice(0,beginingIndex);
+          const lastPartOfFile = targetFileContent.slice(secondMatch.index);
+          const newFileContents = `${firstPartOfFile}${generatedContent[contentType]}\n  ${lastPartOfFile}`; //\n & two spaces for formatting
+
+          targetFileContent = newFileContents;
           fileContentsHaveChanged = true;
           Logger.info(
             `INJECTION In: ${targetPath}\n` +
