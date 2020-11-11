@@ -14,9 +14,9 @@ find the commit hash and install same as above but with #specific-commit-hash ap
 
 # Magic Comments
 a PAIR of either of these tags:
-<!-- INJECT-JS -->
+`<!-- INJECT-JS -->`
 or 
-<!-- INJECT-CSS -->
+`<!-- INJECT-CSS -->`
 explains to the plugin which content needs to be replaced. 
 All files generated which your entry chunk needs to have to be able to be able to run properly will be injected into your target file in between the two magic comments. This includes files generated during webpack optimizations like the ones you'll find here:
 https://webpack.js.org/guides/caching/#extracting-boilerplate
