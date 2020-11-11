@@ -38,8 +38,30 @@ class MPAInjectHashWebpackPlugin {
 
         /****************** Establish the writeable target for current entryPoint **********/
         // default target write file assumed to exists in same directory as the entry module.
-        let targetPath = configEntries[name].replace(FILE, this.defaultWriteFile);
-  
+        let targetPath;
+
+        /* A situation arrises when trying to use Sentry for error reporting where each entry
+         * will have two paths (in an array). The path not specified in the config is to the 
+         * node_modules/@Sentry/webpack-plugin.We need to ignore this entry because the only 
+         * thing which we want to concern ourselves with here is the path specified in the 
+         * config's entry so that we can inject the generated bundles properly. */
+        if( Array.isArray(configEntries[name]) ) {
+          targetPath = configEntries[name].reduce((expectedPath, entryPath) => {
+            if(!entryPath.includes('node_modules')){
+              expectedPath = entryPath
+            }
+            return expectedPath;
+          }, '');
+
+        } else {
+          targetPath = configEntries[name];
+        }
+        
+        /** Once we have a path, the first step is to replace the file in the path with 
+         * the default write file to establish a base case */
+        targetPath = targetPath.replace(FILE, this.defaultWriteFile);
+
+        /** Next, change the path if we have been specified to from the passed in options */
         if (this.targets[name]) {
           targetPath = this.targets[name].path || 
           configEntries[name].replace(FILE, `${this.targets[name].file}`);
